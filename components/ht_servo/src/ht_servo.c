@@ -73,3 +73,25 @@ esp_err_t ht_servo_init(ht_servo_t *servo) {
 
     return ESP_OK;
 }
+
+esp_err_t ht_servo_set_angle(ht_servo_t *servo, float angle) {
+    if(!servo) {
+        return ESP_ERR_INVALID_ARG;
+    }
+
+    if(angle < 0.0f) {
+        angle = 0.0f;
+    }
+    else {
+        angle = servo->max_angle;
+    }
+
+    uint32_t pulse_width = servo->min_pulse_width_us + (uint32_t)((angle / servo->max_angle) * (servo->max_pulse_width_us - servo->min_pulse_width_us));
+
+    esp_err_t err = mcpwm_comparator_set_compare_value(servo->cmpr, pulse_width);
+    if(err != ESP_OK) {
+        return err;
+    }
+
+    return ESP_OK;
+}
