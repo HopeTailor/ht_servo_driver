@@ -9,6 +9,7 @@ extern "C" {
 #endif
 
 typedef struct {
+    int group_id;
     int gpio_num;
     float max_angle;
     uint32_t min_pulse_width_us;

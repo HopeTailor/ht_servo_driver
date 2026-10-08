@@ -6,8 +6,8 @@ esp_err_t ht_servo_init(ht_servo_t *servo) {
     }
 
     mcpwm_timer_config_t timer_config = {
-        .group_id = 0,
-        .clk_src = MCPWM_TIMER_CLK_SRC_DEAULT,
+        .group_id = servo->group_id,
+        .clk_src = MCPWM_TIMER_CLK_SRC_DEFAULT,
         .resolution_hz = 1000000,
         .count_mode = MCPWM_TIMER_COUNT_MODE_UP,
         .period_ticks = 20000,
@@ -18,7 +18,7 @@ esp_err_t ht_servo_init(ht_servo_t *servo) {
     }
 
     mcpwm_operator_config_t oper_config = {
-        .group_id = 0,
+        .group_id = servo->group_id,
     };
     err = mcpwm_new_operator(&oper_config, &servo->oper);
     if(err != ESP_OK) {
@@ -30,7 +30,15 @@ esp_err_t ht_servo_init(ht_servo_t *servo) {
         return err;
     }
 
-    err = mcpwm_comparator_ser_compare_value(servo->cmpr, servo->min_pulse_width_us);
+    mcpwm_comparator_config_t cmpr_config = {
+        .flags.update_cmp_on_tez = true,
+    };
+    err = mcpwm_new_comparator(servo->oper, &cmpr_config, &servo->cmpr);
+    if(err != ESP_OK) {
+        return err;
+    }
+
+    err = mcpwm_comparator_set_compare_value(servo->cmpr, servo->min_pulse_width_us);
     if(err != ESP_OK) {
         return err;
     }
@@ -62,6 +70,6 @@ esp_err_t ht_servo_init(ht_servo_t *servo) {
     if(err != ESP_OK) {
         return err;
     }
-    
+
     return ESP_OK;
 }
