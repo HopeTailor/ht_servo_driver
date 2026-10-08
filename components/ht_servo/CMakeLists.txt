@@ -1,0 +1,1 @@
+idf_component_register(SRCS "ht_servo.c" INCLUDE_DIRS "include" REQUIRES "driver")
