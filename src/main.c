@@ -3,7 +3,7 @@
 #include "freertos/task.h"
 #include "esp_log.h"
 
-static const char *TAG = "SERVO"
+static const char *TAG = "SERVO";
 
 void app_main(void) {
     ESP_LOGI(TAG, "Starting servo test...");
